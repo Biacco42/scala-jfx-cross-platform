@@ -1,40 +1,58 @@
-import Dependencies._
+import java.nio.file.Paths
 
-ThisBuild / scalaVersion     := "2.13.1"
-ThisBuild / version          := "0.1.0-SNAPSHOT"
-ThisBuild / organization     := "info.biacco42"
-ThisBuild / organizationName := "biacco42"
+import sbt._
+
+ThisBuild / scalaVersion      := "2.13.1"
+ThisBuild / version           := "0.1.0-SNAPSHOT"
+ThisBuild / organization      := "info.biacco42"
+ThisBuild / organizationName  := "biacco42"
+ThisBuild / scalacOptions     ++= Seq("-unchecked", "-deprecation", "-encoding", "utf8")
+run / fork                    := true
+run / javaOptions             += "-Djava.library.path=lib"
+
+// Release Task
+lazy val release = taskKey[Unit]("Publishes release package")
+lazy val javaHome = Paths.get(sys.env("JAVA_HOME"))
+
+// For JavaFX platform dependency
+lazy val targetPlatform = System.getProperty("os.name") match {
+  case n if n.startsWith("Linux")   => "linux"
+  case n if n.startsWith("Mac")     => "mac"
+  case n if n.startsWith("Windows") => "win"
+  case _ => throw new Exception("Unknown platform!")
+}
+
+lazy val jreModulePath = Paths.get(javaHome.toString, "jmods")
+
+lazy val javaFXModuleIdentifiers = Seq("base", "controls", "graphics", "fxml", "media", "swing", "web").map { m =>
+  "org.openjfx" % s"javafx-$m" % "14"
+}
+
+// Add dependency on JavaFX libraries, OS dependent
+lazy val javaFXModules = javaFXModuleIdentifiers.map { id =>
+  id classifier targetPlatform
+}
 
 lazy val root = (project in file("."))
   .settings(
     name := "scala-jfx-cross-platform",
-    libraryDependencies += scalaTest % Test
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.1" % Test,
+    libraryDependencies ++= javaFXModules,
+    release := {
+      assembly.value
+      ReleaseTask.buildReleasePackage(
+        name.value, version.value, scalaVersion.value,
+        targetPlatform, target.value.toPath,
+        baseDirectory.value.toPath.resolve("lib"), baseDirectory.value.toPath.resolve("release"),
+        jreModulePath, javaHome, targetPlatform
+      )
+    }
   )
 
-// Uncomment the following for publishing to Sonatype.
-// See https://www.scala-sbt.org/1.x/docs/Using-Sonatype.html for more detail.
+// For sbt-assembly avoiding module system
+assemblyMergeStrategy in assembly := {
+  case PathList("META-INF", "MANIFEST.MF", xs @ _*) => MergeStrategy.discard
+  case "module-info.class" => MergeStrategy.discard
+  case x => MergeStrategy.deduplicate
+}
 
-// ThisBuild / description := "Some descripiton about your project."
-// ThisBuild / licenses    := List("Apache 2" -> new URL("http://www.apache.org/licenses/LICENSE-2.0.txt"))
-// ThisBuild / homepage    := Some(url("https://github.com/example/project"))
-// ThisBuild / scmInfo := Some(
-//   ScmInfo(
-//     url("https://github.com/your-account/your-project"),
-//     "scm:git@github.com:your-account/your-project.git"
-//   )
-// )
-// ThisBuild / developers := List(
-//   Developer(
-//     id    = "Your identifier",
-//     name  = "Your Name",
-//     email = "your@email",
-//     url   = url("http://your.url")
-//   )
-// )
-// ThisBuild / pomIncludeRepository := { _ => false }
-// ThisBuild / publishTo := {
-//   val nexus = "https://oss.sonatype.org/"
-//   if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
-//   else Some("releases" at nexus + "service/local/staging/deploy/maven2")
-// }
-// ThisBuild / publishMavenStyle := true
