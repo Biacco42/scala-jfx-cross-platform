@@ -20,8 +20,8 @@ object ReleaseTask {
 
     cleanBeforeBuild(targetPath)
     val depList = getDependencyList(jarPath, jmodsPath, javaHome)
-    println("Dependent JRE modules:")
-    depList.foreach(println)
+    val deps = depList.mkString(", ")
+    println("Dependent JRE modules: " + deps)
     buildReleaseJRE(jarPath, targetPath, jmodsPath, depList, javaHome)
     buildPackage(name, version, targetPlatform, jarPath, targetPath, libPath, releasePath, currentPlatform)
   }
