@@ -1,3 +1,12 @@
+/**
+ * This file is part of scala-jfx-cross-platform.
+ *
+ * Copyright (c) 2020 Biacco42
+ *
+ * This software is released under the MIT License.
+ * http://opensource.org/licenses/mit-license.php
+ */
+
 import java.nio.file.Paths
 
 import sbt._

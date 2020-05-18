@@ -1,14 +1,19 @@
-package info.biacco42.scalajfx
+/**
+ * This file is part of scala-jfx-cross-platform.
+ *
+ * Copyright (c) 2020 Biacco42
+ *
+ * This software is released under the MIT License.
+ * http://opensource.org/licenses/mit-license.php
+ */
+
+package info.biacco42.scalajfxsample
 
 import javafx.application.Application
 import javafx.scene.Scene
 import javafx.scene.control.Label
 import javafx.scene.layout.StackPane
 import javafx.stage.Stage
-
-/**
- * Created by Biacco42 on 2020/03/23
- */
 
 object Main extends App {
   Application.launch(classOf[HelloFX], args: _*)

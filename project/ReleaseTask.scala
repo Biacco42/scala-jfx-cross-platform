@@ -1,3 +1,12 @@
+/**
+ * This file is part of scala-jfx-cross-platform.
+ *
+ * Copyright (c) 2020 Biacco42
+ *
+ * This software is released under the MIT License.
+ * http://opensource.org/licenses/mit-license.php
+ */
+
 import java.io.File
 
 import sbt.io.IO
@@ -6,10 +15,6 @@ import scala.sys.process._
 import java.nio.file.{Path, Paths}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-
-/**
- * Created by Biacco42 on 2020/3/23.
- */
 
 object ReleaseTask {
   def buildReleasePackage(name: String, version: String, scalaVersion: String,
