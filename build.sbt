@@ -44,7 +44,7 @@ lazy val javaFXModules = javaFXModuleIdentifiers.map { id =>
 
 lazy val root = (project in file("."))
   .settings(
-    name := "scala-jfx-cross-platform",
+    name := "scala-jfx-crossplatform",
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.1" % Test,
     libraryDependencies ++= javaFXModules,
     release := {
